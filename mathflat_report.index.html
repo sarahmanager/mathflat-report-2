@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>시험 분석 결과지 | 매쓰플랫</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary: #00D4AA;
+  --primary-dark: #00B894;
+  --primary-light: #E8FBF6;
+  --primary-pale: #F0FDF9;
+  --navy: #1B2838;
+  --navy-light: #2D4263;
+  --text: #1F2937;
+  --text-secondary: #6B7280;
+  --text-muted: #9CA3AF;
+  --bg: #F7F9FC;
+  --white: #FFFFFF;
+  --border: #E5E7EB;
+  --border-light: #F3F4F6;
+  --danger: #EF4444;
+  --danger-light: #FEF2F2;
+  --warning: #F59E0B;
+  --warning-light: #FFFBEB;
+  --success: #10B981;
+  --success-light: #ECFDF5;
+  --info: #3B82F6;
+  --info-light: #EFF6FF;
+  --purple: #8B5CF6;
+  --purple-light: #F3F0FF;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+  --shadow: 0 4px 12px rgba(0,0,0,0.06);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.08);
+  --r: 16px;
+  --r-sm: 10px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: "Noto Sans KR", -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.6; }
+.hdr { background: var(--white); height: 60px; padding: 0 32px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 300; border-bottom: 1px solid var(--border); box-shadow: var(--shadow-sm); }
+.logo { font-family: "Space Grotesk", sans-serif; font-weight: 700; font-size: 1rem; color: var(--navy); display: flex; align-items: center; gap: 10px; letter-spacing: -0.3px; }
+.logo-dot { width: 28px; height: 28px; border-radius: 8px; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 0.75rem; font-weight: 700; }
+.hdr-tag { background: var(--primary-light); color: var(--primary-dark); font-size: 0.7rem; font-weight: 600; padding: 5px 14px; border-radius: 20px; letter-spacing: 0.3px; }
+.tabs { background: var(--white); border-bottom: 1px solid var(--border); display: flex; padding: 0 32px; gap: 4px; }
+.tab { padding: 16px 24px; border: none; background: transparent; font-family: "Noto Sans KR", sans-serif; font-size: 0.88rem; font-weight: 500; color: var(--text-muted); cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.2s ease; display: flex; align-items: center; gap: 8px; }
+.tab.on { color: var(--navy); border-bottom-color: var(--primary); font-weight: 700; }
+.tab:hover:not(.on) { color: var(--text-secondary); }
+.tbadge { background: var(--primary); color: white; font-size: 0.65rem; font-weight: 700; padding: 2px 8px; border-radius: 10px; display: none; }
+.panel { display: none; }
+.panel.on { display: block; }
+.wrap { max-width: 1000px; margin: 28px auto; padding: 0 20px; }
+.card { background: var(--white); border-radius: var(--r); border: 1px solid var(--border); margin-bottom: 20px; box-shadow: var(--shadow); overflow: hidden; }
+.ch { padding: 20px 28px 0; display: flex; align-items: center; gap: 12px; }
+.ch-num { width: 32px; height: 32px; border-radius: var(--r-sm); background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%); color: white; display: flex; align-items: center; justify-content: center; font-family: "JetBrains Mono", monospace; font-size: 0.85rem; font-weight: 700; flex-shrink: 0; }
+.ch-title { font-weight: 800; font-size: 1rem; letter-spacing: -0.3px; color: var(--navy); }
+.ch-sub { font-size: 0.76rem; color: var(--text-muted); margin-left: auto; }
+.cb { padding: 20px 28px 28px; }
+.fg2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.fg { display: flex; flex-direction: column; gap: 6px; }
+.fg.full { grid-column: 1 / -1; }
+.fl { font-size: 0.75rem; font-weight: 600; color: var(--text-secondary); letter-spacing: 0.2px; }
+.fi, .fs { padding: 12px 16px; border: 1.5px solid var(--border); border-radius: var(--r-sm); font-family: "Noto Sans KR", sans-serif; font-size: 0.9rem; color: var(--text); background: var(--white); transition: all 0.2s ease; outline: none; }
+.fi:focus, .fs:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0, 212, 170, 0.12); }
+.step-guide { display: flex; gap: 20px; background: var(--primary-pale); border: 1px solid rgba(0, 212, 170, 0.2); border-radius: var(--r-sm); padding: 18px 22px; margin-bottom: 18px; flex-wrap: wrap; }
+.step-item { display: flex; align-items: flex-start; gap: 10px; flex: 1; min-width: 160px; }
+.step-n { width: 26px; height: 26px; border-radius: 50%; background: var(--primary); color: white; font-size: 0.75rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+.step-txt { font-size: 0.82rem; color: var(--text-secondary); line-height: 1.6; }
+.step-txt strong { color: var(--navy); font-weight: 700; }
+.paste-hero { background: linear-gradient(135deg, var(--primary-light) 0%, #E0F7F1 100%); border: 2px dashed var(--primary); border-radius: var(--r); padding: 36px 32px; text-align: center; cursor: pointer; transition: all 0.25s ease; position: relative; overflow: hidden; margin-bottom: 18px; }
+.paste-hero:hover { border-color: var(--primary-dark); background: linear-gradient(135deg, #D8F5ED 0%, #C8EFE5 100%); }
+.paste-hero.has-data { border-style: solid; border-color: var(--success); background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%); }
+.paste-icon { font-size: 2.2rem; margin-bottom: 10px; }
+.paste-title { font-weight: 800; font-size: 1.05rem; color: var(--navy); margin-bottom: 6px; letter-spacing: -0.3px; }
+.paste-hero.has-data .paste-title { color: var(--success); }
+.paste-sub { font-size: 0.82rem; color: var(--text-secondary); line-height: 1.7; }
+.paste-ta { position: absolute; inset: 0; opacity: 0; cursor: pointer; resize: none; width: 100%; height: 100%; font-size: 16px; }
+.score-zone, .ai-chapter-zone { background: var(--warning-light); border: 1.5px solid #FDE68A; border-radius: var(--r-sm); padding: 16px 20px; margin-bottom: 18px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.ai-chapter-zone { background: linear-gradient(135deg, var(--purple-light) 0%, #EDE9FE 100%); border-color: #C4B5FD; flex-direction: column; align-items: stretch; }
+.sz-label, .az-label { font-size: 0.85rem; font-weight: 700; color: var(--warning); white-space: nowrap; }
+.az-label { color: var(--purple); display: flex; align-items: center; gap: 8px; }
+.az-label .ai-icon { background: var(--purple); color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.68rem; font-weight: 700; }
+.sz-note, .az-note { font-size: 0.78rem; color: var(--text-secondary); }
+.sz-btns { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.sz-btn, .az-btn { background: white; border: 1.5px solid #FDE68A; border-radius: 8px; padding: 7px 14px; font-size: 0.8rem; font-weight: 700; color: var(--warning); cursor: pointer; transition: all 0.15s ease; }
+.az-btn { border-color: #C4B5FD; color: var(--purple); }
+.sz-btn:hover { background: var(--warning); color: white; }
+.az-btn:hover { background: var(--purple); color: white; }
+.sz-inp { width: 56px; padding: 7px 10px; border: 1.5px solid #FDE68A; border-radius: 8px; font-size: 0.85rem; text-align: center; outline: none; font-family: "JetBrains Mono", monospace; }
+.az-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+.az-result { margin-top: 0; }
+.pv-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.pv-title { font-size: 0.85rem; font-weight: 700; color: var(--text); }
+.pv-cnt { background: var(--navy); color: white; font-size: 0.72rem; font-weight: 700; padding: 4px 12px; border-radius: 12px; font-family: "JetBrains Mono", monospace; }
+.tbl-wrap { overflow-x: auto; border-radius: var(--r-sm); border: 1px solid var(--border); }
+.ptbl { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+.ptbl th { background: var(--navy); color: white; padding: 12px 14px; text-align: center; font-size: 0.73rem; font-weight: 600; letter-spacing: 0.4px; white-space: nowrap; }
+.ptbl td { padding: 8px 10px; border-bottom: 1px solid var(--border-light); background: white; vertical-align: middle; }
+.ptbl tr:last-child td { border-bottom: none; }
+.ptbl tr:hover td { background: var(--primary-pale); }
+.ptbl input, .ptbl select { width: 100%; padding: 6px 4px; border: 1.5px solid transparent; border-radius: 6px; font-family: "Noto Sans KR", sans-serif; font-size: 0.78rem; background: transparent; outline: none; transition: all 0.15s ease; }
+.ptbl input:focus, .ptbl select:focus { background: white; border-color: var(--primary); box-shadow: 0 0 0 2px rgba(0, 212, 170, 0.12); }
+.sc-inp { text-align: center !important; font-family: "JetBrains Mono", monospace !important; font-weight: 600 !important; }
+.rnum { font-family: "JetBrains Mono", monospace; font-weight: 700; text-align: center !important; color: var(--text-muted); }
+.del-btn { background: var(--danger-light); border: 1px solid #FECACA; color: var(--danger); border-radius: 6px; padding: 4px 8px; cursor: pointer; font-size: 0.75rem; transition: all 0.15s ease; }
+.del-btn:hover { background: var(--danger); color: white; }
+.d-sel-최상 { background: var(--danger-light) !important; color: var(--danger) !important; font-weight: 700 !important; }
+.d-sel-상 { background: #FFF7ED !important; color: #EA580C !important; font-weight: 700 !important; }
+.d-sel-중 { background: var(--info-light) !important; color: var(--info) !important; font-weight: 600 !important; }
+.d-sel-중하 { background: #F0FDFA !important; color: #0D9488 !important; font-weight: 600 !important; }
+.d-sel-하 { background: var(--border-light) !important; color: var(--text-muted) !important; font-weight: 600 !important; }
+.tbl-acts { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+.bx { padding: 8px 16px; border-radius: 8px; border: none; font-family: "Noto Sans KR", sans-serif; font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; }
+.bx-g { background: white; border: 1.5px solid var(--border); color: var(--text-secondary); }
+.bx-g:hover { border-color: var(--primary); color: var(--navy); }
+.bx-p { background: var(--purple-light); border: 1.5px solid #C4B5FD; color: var(--purple); }
+.bx-p:hover { background: var(--purple); color: white; }
+.bx-d { background: var(--danger-light); border: 1.5px solid #FECACA; color: var(--danger); }
+.bx-d:hover { background: var(--danger); color: white; }
+.gen-wrap { background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%); border-radius: var(--r); padding: 40px; text-align: center; margin-bottom: 24px; position: relative; overflow: hidden; }
+.gen-wrap::before { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse at 20% 50%, rgba(0, 212, 170, 0.2) 0%, transparent 50%), radial-gradient(ellipse at 80% 50%, rgba(0, 212, 170, 0.1) 0%, transparent 50%); }
+.gen-wrap > * { position: relative; }
+.btn-gen { background: var(--primary); color: white; border: none; border-radius: 12px; padding: 18px 52px; font-family: "Noto Sans KR", sans-serif; font-size: 1.05rem; font-weight: 800; cursor: pointer; transition: all 0.25s ease; box-shadow: 0 4px 24px rgba(0, 212, 170, 0.4); letter-spacing: -0.2px; }
+.btn-gen:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0, 212, 170, 0.5); background: var(--primary-dark); }
+.btn-gen:active { transform: none; }
+.gen-note { margin-top: 12px; font-size: 0.78rem; color: rgba(255, 255, 255, 0.5); }
+.loader { display: none; position: fixed; inset: 0; background: rgba(255, 255, 255, 0.95); z-index: 999; align-items: center; justify-content: center; flex-direction: column; gap: 14px; }
+.loader.on { display: flex; }
+.spin { width: 48px; height: 48px; border: 4px solid var(--primary-light); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.load-t { font-weight: 800; font-size: 1rem; color: var(--navy); }
+.load-s { font-size: 0.8rem; color: var(--text-secondary); }
+.dots { display: flex; gap: 6px; margin-top: 4px; }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--primary); animation: blink 1.2s ease infinite; }
+.dot:nth-child(2) { animation-delay: 0.2s; }
+.dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes blink { 0%, 80%, 100% { opacity: 0.3; } 40% { opacity: 1; } }
+.res-wrap { max-width: 1000px; margin: 28px auto; padding: 0 20px; }
+.res-bar { display: flex; gap: 10px; margin-bottom: 20px; align-items: center; flex-wrap: wrap; }
+.res-bar h2 { font-weight: 800; font-size: 1rem; flex: 1; letter-spacing: -0.3px; color: var(--navy); }
+.bs { background: var(--navy); color: white; border: none; border-radius: 10px; padding: 12px 22px; font-family: "Noto Sans KR", sans-serif; font-size: 0.85rem; font-weight: 700; cursor: pointer; transition: all 0.2s ease; }
+.bs:hover { background: var(--primary); }
+.bs.img-btn { background: var(--purple); }
+.bs.img-btn:hover { background: #7C3AED; }
+.bo { background: white; color: var(--text-secondary); border: 1.5px solid var(--border); border-radius: 10px; padding: 12px 22px; font-family: "Noto Sans KR", sans-serif; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; }
+.bo:hover { border-color: var(--primary); color: var(--navy); }
+#rptOut { background: var(--white); border-radius: var(--r); overflow: hidden; box-shadow: var(--shadow-lg); border: 1px solid var(--border); }
+.rpt-header { background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%); padding: 40px 48px 36px; color: white; position: relative; overflow: hidden; }
+.rpt-header::after { content: ""; position: absolute; right: -80px; top: -80px; width: 320px; height: 320px; border-radius: 50%; background: radial-gradient(circle, rgba(0, 212, 170, 0.15) 0%, transparent 60%); pointer-events: none; }
+.rpt-header-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; position: relative; }
+.rpt-eyebrow { font-size: 0.75rem; font-weight: 500; color: rgba(255, 255, 255, 0.6); letter-spacing: 0.6px; margin-bottom: 8px; }
+.rpt-title { font-weight: 800; font-size: 1.8rem; color: #fff; line-height: 1.25; letter-spacing: -0.5px; }
+.rpt-title-accent { color: var(--primary); }
+.rpt-score-block { text-align: right; flex-shrink: 0; }
+.rpt-score-num { font-family: "JetBrains Mono", monospace; font-size: 2.8rem; font-weight: 700; color: #fff; line-height: 1; }
+.rpt-score-unit { font-size: 1.2rem; font-weight: 500; color: rgba(255, 255, 255, 0.7); margin-left: 2px; }
+.rpt-score-sub { font-size: 0.78rem; color: rgba(255, 255, 255, 0.5); margin-top: 6px; }
+.rpt-meta-row { display: flex; flex-wrap: wrap; gap: 10px 28px; margin-top: 28px; padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.1); }
+.rpt-meta-item { display: flex; flex-direction: column; gap: 3px; }
+.rpt-meta-key { font-size: 0.68rem; color: rgba(255, 255, 255, 0.4); letter-spacing: 0.4px; text-transform: uppercase; }
+.rpt-meta-val { font-size: 0.88rem; font-weight: 600; color: white; }
+.kpi-strip { display: grid; grid-template-columns: repeat(4, 1fr); background: var(--bg); border-bottom: 1px solid var(--border); }
+.kpi-cell { padding: 24px 20px; text-align: center; border-right: 1px solid var(--border); }
+.kpi-cell:last-child { border-right: none; }
+.kpi-n { font-family: "JetBrains Mono", monospace; font-size: 2rem; font-weight: 700; color: var(--navy); line-height: 1; }
+.kpi-n .unit { font-size: 0.9rem; font-weight: 500; color: var(--text-muted); margin-left: 2px; }
+.kpi-l { font-size: 0.75rem; color: var(--text-muted); margin-top: 8px; }
+.rpt-sec { padding: 32px 48px; border-bottom: 1px solid var(--border-light); }
+.rpt-sec:last-child { border-bottom: none; }
+.rpt-sec-title { font-family: "Space Grotesk", sans-serif; font-size: 0.72rem; font-weight: 600; color: var(--text-muted); letter-spacing: 1.2px; text-transform: uppercase; margin-bottom: 20px; }
+
+/* ── 난이도 차트: SVG 기반으로 전면 교체 ── */
+.diff-chart-wrap { background: white; border: 1px solid var(--border); border-radius: var(--r-sm); overflow: hidden; }
+.diff-chart-title { background: var(--bg); padding: 16px 24px; font-size: 0.95rem; font-weight: 800; color: var(--navy); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
+.diff-chart-title::before { content: "◆"; color: var(--navy); font-size: 0.8rem; }
+.diff-chart-svg-wrap { padding: 24px 24px 8px; }
+.diff-chart-svg-wrap svg { width: 100%; display: block; }
+.diff-chart-legend { display: flex; justify-content: center; gap: 32px; padding: 14px 20px; background: var(--bg); border-top: 1px solid var(--border); }
+.diff-legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.78rem; color: var(--text-secondary); }
+.diff-legend-bar { width: 14px; height: 14px; border-radius: 3px; background: linear-gradient(180deg, #3B82F6 0%, #2563EB 100%); }
+.diff-legend-line { width: 20px; height: 3px; background: #F97316; border-radius: 2px; }
+
+.type-pie-wrap { background: white; border: 1px solid var(--border); border-radius: var(--r-sm); overflow: hidden; }
+.type-pie-title { background: var(--bg); padding: 16px 24px; font-size: 0.95rem; font-weight: 800; color: var(--navy); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
+.type-pie-title::before { content: "◆"; color: var(--navy); font-size: 0.8rem; }
+.type-pie-container { padding: 24px; display: flex; align-items: center; justify-content: center; gap: 40px; }
+.type-pie-chart { width: 180px; height: 180px; }
+.pie-svg-filled { width: 100%; height: 100%; }
+.pie-label-num { font-family: "JetBrains Mono", monospace; font-size: 20px; font-weight: 700; fill: white; }
+.type-pie-legend { display: flex; flex-direction: column; gap: 12px; }
+.pie-legend-item { display: flex; align-items: center; gap: 10px; font-size: 0.9rem; font-weight: 600; color: var(--text); }
+.pie-legend-dot { width: 16px; height: 16px; border-radius: 4px; }
+.chapter-chart { display: flex; flex-direction: column; gap: 0; background: white; border: 1px solid var(--border); border-radius: var(--r-sm); overflow: hidden; }
+.chapter-chart-title { background: var(--bg); padding: 16px 24px; font-size: 0.95rem; font-weight: 800; color: var(--navy); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
+.chapter-chart-title::before { content: "◆"; color: var(--navy); font-size: 0.8rem; }
+.chapter-row { display: grid; grid-template-columns: 140px 1fr; align-items: center; border-bottom: 1px solid var(--border-light); background: white; }
+.chapter-row:last-child { border-bottom: none; }
+.chapter-row:hover { background: var(--primary-pale); }
+.chapter-row-name { padding: 16px 16px; font-size: 0.85rem; font-weight: 700; color: var(--navy); border-right: 1px solid var(--border-light); background: var(--bg); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.chapter-row-bars { padding: 12px 20px; display: flex; flex-direction: column; gap: 6px; }
+.chapter-bar-line { display: flex; align-items: center; gap: 8px; height: 22px; }
+.chapter-bar-track { flex: 1; height: 22px; background: var(--border-light); border-radius: 4px; overflow: hidden; position: relative; }
+.chapter-bar-fill { height: 100%; border-radius: 4px; display: flex; align-items: center; justify-content: flex-end; padding-right: 10px; font-family: "JetBrains Mono", monospace; font-size: 0.75rem; font-weight: 700; color: white; min-width: 40px; transition: width 0.8s cubic-bezier(0.23, 1, 0.32, 1); }
+.chapter-bar-fill.count { background: linear-gradient(90deg, #F59E0B 0%, #D97706 100%); }
+.chapter-bar-fill.score { background: linear-gradient(90deg, #3B82F6 0%, #2563EB 100%); }
+.chapter-chart-legend { display: flex; justify-content: center; gap: 32px; padding: 14px 20px; background: var(--bg); border-top: 1px solid var(--border); }
+.chapter-legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.78rem; color: var(--text-secondary); }
+.chapter-legend-dot { width: 14px; height: 14px; border-radius: 3px; }
+.chapter-legend-dot.count { background: linear-gradient(90deg, #F59E0B 0%, #D97706 100%); }
+.chapter-legend-dot.score { background: linear-gradient(90deg, #3B82F6 0%, #2563EB 100%); }
+.qtbl { width: 100%; border-collapse: collapse; }
+.qtbl thead th { padding: 12px 16px; font-size: 0.68rem; font-weight: 700; color: var(--text-muted); letter-spacing: 0.8px; text-transform: uppercase; border-bottom: 2px solid var(--border); text-align: center; white-space: nowrap; }
+.qtbl thead th.left { text-align: left; }
+.qtbl tbody td { padding: 12px 16px; border-bottom: 1px solid var(--border-light); font-size: 0.85rem; text-align: center; vertical-align: middle; }
+.qtbl tbody tr:last-child td { border-bottom: none; }
+.qtbl tbody tr:hover td { background: var(--primary-pale); }
+.qtbl td.left { text-align: left; }
+.q-num-cell { font-family: "JetBrains Mono", monospace; font-weight: 700; color: var(--text-muted); }
+.q-name-cell { color: var(--text); font-size: 0.82rem; }
+.q-score-cell { font-family: "JetBrains Mono", monospace; font-weight: 700; color: var(--navy); }
+.chapter-group-header { background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%); }
+.chapter-group-header td { padding: 14px 20px !important; border-bottom: none !important; }
+.chapter-group-title { display: flex; align-items: center; gap: 12px; color: white; font-weight: 700; font-size: 0.9rem; }
+.chapter-group-title .ch-badge { background: var(--primary); padding: 4px 10px; border-radius: 6px; font-size: 0.72rem; font-weight: 700; }
+.chapter-group-stats { display: flex; gap: 16px; margin-left: auto; color: rgba(255,255,255,0.8); font-size: 0.78rem; }
+.chapter-group-stats span { font-family: "JetBrains Mono", monospace; }
+.badge { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 6px; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.2px; white-space: nowrap; }
+.b-최상 { background: var(--danger-light); color: var(--danger); }
+.b-상 { background: #FFF7ED; color: #EA580C; }
+.b-중 { background: var(--info-light); color: var(--info); }
+.b-중하 { background: #F0FDFA; color: #0D9488; }
+.b-하 { background: var(--border-light); color: var(--text-muted); }
+.b-obj { background: var(--success-light); color: var(--success); }
+.b-sub { background: var(--purple-light); color: var(--purple); }
+.ai-box { background: linear-gradient(135deg, var(--primary-light) 0%, #E0F7F1 100%); border: 1px solid rgba(0, 212, 170, 0.3); border-radius: var(--r-sm); padding: 28px 32px; }
+.ai-box-head { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }
+.ai-box-tag { background: var(--navy); color: #fff; font-size: 0.7rem; font-weight: 700; padding: 4px 12px; border-radius: 6px; letter-spacing: 0.5px; }
+.ai-box-sub { font-size: 0.73rem; color: var(--text-muted); }
+.ai-edit-btn { margin-left: auto; background: white; border: 1px solid var(--border); border-radius: 6px; padding: 6px 12px; font-size: 0.75rem; font-weight: 600; color: var(--text-secondary); cursor: pointer; transition: all 0.15s ease; }
+.ai-edit-btn:hover { border-color: var(--primary); color: var(--navy); }
+.ai-box-text { font-size: 0.9rem; line-height: 2; color: var(--text); white-space: pre-wrap; }
+.ai-box-edit { width: 100%; min-height: 150px; padding: 16px; border: 2px solid var(--primary); border-radius: 8px; font-family: "Noto Sans KR", sans-serif; font-size: 0.9rem; line-height: 2; color: var(--text); background: white; resize: vertical; outline: none; }
+.ai-edit-actions { display: flex; gap: 10px; margin-top: 14px; }
+.ai-save-btn { background: var(--primary); color: white; border: none; border-radius: 8px; padding: 10px 20px; font-size: 0.85rem; font-weight: 700; cursor: pointer; transition: all 0.15s ease; }
+.ai-save-btn:hover { background: var(--primary-dark); }
+.ai-cancel-btn { background: white; color: var(--text-secondary); border: 1px solid var(--border); border-radius: 8px; padding: 10px 20px; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.15s ease; }
+.ai-cancel-btn:hover { border-color: var(--text-muted); color: var(--navy); }
+.rpt-footer { padding: 20px 48px; background: var(--bg); border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+.rpt-footer-l { font-size: 0.8rem; font-weight: 700; color: var(--text-secondary); }
+.rpt-footer-accent { color: var(--primary); }
+.rpt-footer-r { font-size: 0.75rem; color: var(--text-muted); }
+.toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--navy); color: white; padding: 14px 28px; border-radius: 12px; font-size: 0.85rem; font-weight: 700; z-index: 9999; transition: transform 0.3s ease; white-space: nowrap; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2); }
+.toast.show { transform: translateX(-50%) translateY(0); }
+.empty { padding: 80px; text-align: center; color: var(--text-muted); }
+@media (max-width: 640px) { .fg2 { grid-template-columns: 1fr; } .kpi-strip { grid-template-columns: repeat(2, 1fr); } .rpt-header { padding: 28px 24px; } .rpt-sec { padding: 24px; } .rpt-footer { padding: 16px 24px; flex-direction: column; gap: 8px; } }
+@media print {
+  .hdr, .tabs, .res-bar, .loader, .toast { display: none !important; }
+  .res-wrap { margin: 0; padding: 0; max-width: 100%; }
+  #rptOut { box-shadow: none; border: none; border-radius: 0; }
+  .panel { display: block !important; }
+  #pRes { display: block !important; }
+  #pIn { display: none !important; }
+  body { background: white; }
+  .rpt-header, .ai-box, .kpi-cell, .chapter-group-header, .chapter-bar-fill, .badge, .pie-svg-filled path, .type-pie-wrap, .diff-chart-wrap, .chapter-chart { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  .rpt-sec { break-inside: avoid !important; page-break-inside: avoid !important; }
+  .rpt-sec-title { break-after: avoid !important; page-break-after: avoid !important; }
+  .ai-box, .kpi-strip, .chapter-chart, .diff-chart-wrap, .type-pie-wrap, .qtbl { break-inside: avoid !important; page-break-inside: avoid !important; }
+  .qtbl tr, .chapter-group-header, .chapter-row { break-inside: avoid !important; page-break-inside: avoid !important; }
+  .ai-edit-btn, .ai-edit-actions, .ai-box-edit { display: none !important; }
+}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="logo"><span class="logo-dot">M</span>시험 분석 결과지 생성기</div>
+  <div class="hdr-tag">powered by 매쓰플랫</div>
+</header>
+
+<nav class="tabs">
+  <button class="tab on" onclick="goTab('In')" id="tIn">📝 정보 입력</button>
+  <button class="tab" onclick="goTab('Res')" id="tRes">📊 결과지 확인 <span class="tbadge" id="tbadge">완성</span></button>
+</nav>
+
+<div class="panel on" id="pIn">
+<div class="wrap">
+  <div class="card">
+    <div class="ch"><div class="ch-num">1</div><div class="ch-title">시험 기본 정보</div></div>
+    <div class="cb">
+      <div class="fg2">
+        <div class="fg"><label class="fl">학교명</label><input class="fi" id="iSch" placeholder="예) 숙명여자중학교"></div>
+        <div class="fg"><label class="fl">학년</label>
+          <select class="fs" id="iGr"><option>중1</option><option selected>중2</option><option>중3</option><option>고1</option><option>고2</option><option>고3</option></select>
+        </div>
+        <div class="fg"><label class="fl">시험 종류</label>
+          <select class="fs" id="iEx"><option>1학기 중간고사</option><option>1학기 기말고사</option><option>2학기 중간고사</option><option>2학기 기말고사</option></select>
+        </div>
+        <div class="fg"><label class="fl">교과서 출판사</label><input class="fi" id="iPub" placeholder="예) 비상"></div>
+        <div class="fg full"><label class="fl">출제 범위</label><input class="fi" id="iRng" placeholder="예) 복소수, 이차방정식, 이차함수"></div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ch"><div class="ch-num">2</div><div class="ch-title">문항 데이터 입력</div><div class="ch-sub">매쓰플랫 표 복사 → 붙여넣기로 자동 입력</div></div>
+    <div class="cb">
+      <div class="step-guide">
+        <div class="step-item"><div class="step-n">1</div><div class="step-txt">매쓰플랫 AI 기출업로드 결과에서<br><strong>표 전체 드래그 후 복사</strong> (Ctrl+C)</div></div>
+        <div class="step-item"><div class="step-n">2</div><div class="step-txt">아래 박스를 클릭 후<br><strong>Ctrl+V 로 붙여넣기</strong></div></div>
+        <div class="step-item"><div class="step-n">3</div><div class="step-txt">번호·문제타입·난이도·유형명<br><strong>자동으로 표가 완성</strong>됩니다 ✓</div></div>
+      </div>
+      <div class="paste-hero" id="pasteHero" onclick="document.getElementById('pasteTA').focus()">
+        <div class="paste-icon" id="pasteIcon">📋</div>
+        <div class="paste-title" id="pasteTitle">여기를 클릭 후 Ctrl+V 로 붙여넣기</div>
+        <div class="paste-sub" id="pasteSub">매쓰플랫 학습지 정보 탭 표를 복사해서 붙여넣으세요<br>번호, 문제 타입, 난이도, 유형명이 자동으로 인식됩니다</div>
+        <textarea id="pasteTA" class="paste-ta" spellcheck="false"></textarea>
+      </div>
+      <div class="score-zone" id="scoreZone" style="display:none">
+        <div><div class="sz-label">⚡ 배점 일괄 설정</div><div class="sz-note">매쓰플랫 표에는 배점이 없어요. 아래에서 빠르게 설정하세요.</div></div>
+        <div class="sz-btns">
+          <button class="sz-btn" onclick="setAllScore(3)">전체 3점</button>
+          <button class="sz-btn" onclick="setAllScore(4)">전체 4점</button>
+          <button class="sz-btn" onclick="setAllScore(5)">전체 5점</button>
+          <span style="font-size:.73rem;color:var(--text-secondary)">직접:</span>
+          <input class="sz-inp" id="szInp" type="number" min="1" max="20" placeholder="점">
+          <button class="sz-btn" onclick="setAllScore(+document.getElementById('szInp').value||3)">적용</button>
+        </div>
+      </div>
+      <div class="ai-chapter-zone" id="aiChapterZone" style="display:none">
+        <div class="az-header">
+          <div><div class="az-label"><span class="ai-icon">AI</span> 대단원 자동 입력</div><div class="az-note">유형명을 분석하여 22 교육과정 기준 대단원을 자동으로 입력합니다.</div></div>
+          <button class="az-btn" onclick="autoFillChapters()" id="aiChapterBtn">🤖 대단원 자동 입력</button>
+        </div>
+        <div class="az-result" id="azResult"></div>
+      </div>
+      <div id="pvArea" style="display:none">
+        <div class="pv-head"><span class="pv-title">📊 인식된 문항 데이터</span><span class="pv-cnt" id="pvCnt">0문항</span></div>
+        <div class="tbl-wrap">
+          <table class="ptbl" id="pvTbl">
+            <thead><tr>
+              <th style="width:40px">번호</th><th style="width:80px">문제타입</th><th style="width:70px">난이도</th>
+              <th style="width:110px">대단원</th><th>유형명</th><th style="width:50px">배점</th><th style="width:28px">✕</th>
+            </tr></thead>
+            <tbody id="pvBody"></tbody>
+          </table>
+        </div>
+        <div class="tbl-acts">
+          <button class="bx bx-g" onclick="addManRow()">＋ 행 추가</button>
+          <button class="bx bx-g" onclick="loadSample()">📋 샘플 보기</button>
+          <button class="bx bx-d" onclick="clearAll()">🗑 전체 삭제</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="gen-wrap">
+    <button class="btn-gen" onclick="generate()">✨ 시험 분석 결과지 생성하기</button>
+    <div class="gen-note">AI가 출제 경향 총평 및 기말대비 학습 방향을 자동으로 작성합니다 (10~20초)</div>
+  </div>
+</div>
+</div>
+
+<div class="panel" id="pRes">
+<div class="res-wrap">
+  <div class="res-bar">
+    <h2>📊 시험 분석 결과지</h2>
+    <button class="bo" onclick="goTab('In')">✏️ 수정</button>
+    <button class="bs" onclick="window.print()">🖨️ PDF 저장 / 인쇄</button>
+    <button class="bs img-btn" onclick="saveAsImage()">🖼️ 이미지 저장</button>
+  </div>
+  <div id="rptOut">
+    <div class="empty">
+      <div style="font-size:2.4rem;margin-bottom:12px">📋</div>
+      <div style="font-weight:800;font-size:1rem;color:var(--text-secondary)">아직 생성된 결과지가 없습니다</div>
+      <div style="margin-top:6px;font-size:.82rem;color:var(--text-muted)">입력 탭에서 데이터를 입력하고 생성 버튼을 눌러주세요</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="loader" id="loader">
+  <div class="spin"></div>
+  <div class="load-t" id="loadT">결과지를 생성하고 있습니다...</div>
+  <div class="load-s" id="loadS">AI가 출제 경향을 분석하는 중</div>
+  <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const DIFFS=['최상','상','중','중하','하'];
+let rid=0;
+
+const CURRICULUM_22 = {
+  '중1': { '소인수분해':['소인수','약수','배수','최대공약수','최소공배수','공약수','공배수'],'정수와 유리수':['정수','유리수','절댓값','수직선','대소 관계','양수','음수'],'문자와 식':['문자','다항식','일차식','등식','부등식','방정식','대입'],'일차방정식':['일차방정식','등식의 성질','이항'],'좌표평면과 그래프':['좌표','순서쌍','사분면','그래프','정비례','반비례'],'기본 도형':['점','선','면','각','수직','평행','위치 관계','꼭짓점','교점'],'작도와 합동':['작도','삼각형','합동','대응','SSS','SAS','ASA'],'평면도형의 성질':['다각형','내각','외각','원','부채꼴','호','현','중심각'],'입체도형의 성질':['다면체','회전체','겉넓이','부피','기둥','뿔','구','원기둥','원뿔'],'자료의 정리와 해석':['줄기와 잎','도수분포','히스토그램','상대도수','도수'] },
+  '중2': { '유리수와 순환소수':['유리수','순환소수','유한소수','무한소수'],'식의 계산':['단항식','지수법칙','등식의 변형'],'일차부등식':['부등식','일차부등식','연립부등식'],'연립일차방정식':['연립방정식','가감법','대입법'],'일차함수':['일차함수','기울기','절편','y절편','x절편'],'삼각형의 성질':['이등변삼각형','직각삼각형','외심','내심','삼각형의 외심','삼각형의 내심'],'사각형의 성질':['평행사변형','직사각형','마름모','정사각형','사다리꼴'],'도형의 닮음':['닮음','닮음비','축소','확대'],'피타고라스 정리':['피타고라스','빗변'],'확률':['경우의 수','확률','사건','여사건'] },
+  '중3': { '제곱근과 실수':['제곱근','무리수','실수','근호','루트'],'근호를 포함한 식의 계산':['분모의 유리화','유리화'],'다항식의 곱셈':['곱셈 공식','전개','완전제곱식'],'인수분해':['인수분해','공통인수','합차공식','인수'],'이차방정식':['이차방정식','근의 공식','판별식','근과 계수','중근'],'이차함수':['이차함수','포물선','꼭짓점','축','최댓값','최솟값','아래로 볼록','위로 볼록'],'삼각비':['삼각비','사인','코사인','탄젠트','sin','cos','tan'],'원의 성질':['원주각','중심각','접선','할선','현'],'통계':['대푯값','중앙값','최빈값','산포도','분산','표준편차'] },
+  '고1': { '다항식':['다항식','나머지정리','인수정리','항등식','나눗셈','몫','나머지','조립제법'],'방정식과 부등식':['복소수','허수','켤레복소수','이차방정식','판별식','근과 계수의 관계','실근','허근','연립방정식','연립부등식','절댓값 방정식','절댓값 부등식','이차부등식','삼차방정식','사차방정식','고차방정식'],'도형의 방정식':['평면좌표','두 점 사이','내분','외분','무게중심','직선의 방정식','기울기','수직','평행','점과 직선','원의 방정식','원과 직선','도형의 이동','대칭이동','평행이동'],'집합과 명제':['집합','명제','조건','증명','부분집합','교집합','합집합','여집합','진리집합','역','이','대우','필요충분조건'],'함수':['함수','합성함수','역함수','유리함수','무리함수','정의역','공역','치역','일대일','항등함수','상수함수'] },
+  '고2': { '지수와 로그':['지수','로그','지수함수','로그함수','거듭제곱','밑','진수','상용로그','자연로그'],'삼각함수':['삼각함수','호도법','라디안','사인법칙','코사인법칙','삼각형의 넓이','주기','진폭'],'수열':['등차수열','등비수열','수열의 합','시그마','Σ','일반항','첫째항','공차','공비','수학적 귀납법','점화식','계차수열'],'수열의 극한':['수열의 극한','급수','수렴','발산'],'미분':['미분계수','도함수','접선','미분','순간변화율','평균변화율','극한','연속'],'적분':['부정적분','정적분','넓이','적분','원시함수'] },
+  '고3': { '수열의 극한':['수열의 극한','급수','무한등비급수','무한급수','수렴','발산'],'함수의 극한과 연속':['함수의 극한','연속','연속함수','우극한','좌극한','불연속'],'미분법':['미분계수','도함수','미분법','합성함수의 미분','음함수','매개변수','롤의 정리','평균값 정리','극대','극소','변곡점','오목','볼록'],'적분법':['부정적분','정적분','적분법','치환적분','부분적분','넓이','부피','회전체'],'확률과 통계':['순열','조합','확률','확률분포','이항분포','정규분포','통계적 추정','신뢰구간','모평균','모비율','기댓값','분산','표준편차','조건부확률','독립','종속'],'공간도형과 공간좌표':['공간도형','공간좌표','정사영','이면각','삼수선'],'벡터':['벡터','평면벡터','공간벡터','내적','외적','성분','위치벡터'] }
+};
+
+function goTab(t){ document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on')); document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on')); document.getElementById('p'+t).classList.add('on'); document.getElementById('t'+t).classList.add('on'); window.scrollTo(0,0); }
+
+const ta=document.getElementById('pasteTA');
+ta.addEventListener('paste',e=>{ setTimeout(()=>{ const raw=ta.value; ta.value=''; const rows=parsePaste(raw); if(rows.length){ populate(rows); showToast(`✅ ${rows.length}개 문항이 자동으로 입력되었습니다!`); } else { showToast('⚠️ 인식 실패. 샘플 버튼을 눌러 형식을 확인해보세요.'); } },60); });
+
+function parsePaste(raw){
+  const SKIP=new Set(['번호','문제 타입','문제타입','난이도','유형명','순서 변경','≡','—','-','=']);
+  const QTYPES=new Set(['객관식','주관식','선다형']);
+  const DIFFSET=new Set(DIFFS);
+  const lines=raw.split('\n').map(l=>l.trim()).filter(l=>l&&!SKIP.has(l));
+  const out=[];
+  let i=0;
+  while(i<lines.length){
+    const l=lines[i];
+    if(/^\d{1,3}$/.test(l)){
+      const num=parseInt(l);
+      const rest=lines.slice(i+1,i+4);
+      let qt=null,diff=null,tname=null;
+      const leftover=[];
+      for(const r of rest){ if(!qt&&QTYPES.has(r)){qt=r;continue;} if(!diff&&DIFFSET.has(r)){diff=r;continue;} leftover.push(r); }
+      if(leftover.length) tname=leftover.reduce((a,b)=>b.length>a.length?b:a,'');
+      if(qt||diff||tname){ out.push({num,qt:qt||'객관식',diff:diff||'중',tname:tname||'-',score:4,chapter:''}); i+=4; continue; }
+    }
+    i++;
+  }
+  if(!out.length){
+    for(const line of raw.split('\n').map(l=>l.trim()).filter(l=>l)){
+      const cols=line.split('\t').map(c=>c.trim()).filter(c=>c&&!SKIP.has(c));
+      if(cols.length<3) continue;
+      let num=null,qt=null,diff=null,tname=null;
+      if(/^\d{1,3}$/.test(cols[0])) num=parseInt(cols[0]);
+      for(const c of cols){ if(!qt&&QTYPES.has(c)){qt=c;continue;} if(!diff&&DIFFSET.has(c)){diff=c;continue;} }
+      const txts=cols.filter(c=>c.length>2&&!QTYPES.has(c)&&!DIFFSET.has(c)&&isNaN(c)&&!SKIP.has(c));
+      if(txts.length) tname=txts.reduce((a,b)=>b.length>a.length?b:a,'');
+      if(num&&(qt||diff)){ out.push({num:num||out.length+1,qt:qt||'객관식',diff:diff||'중',tname:tname||'-',score:4,chapter:''}); }
+    }
+  }
+  return out;
+}
+
+function populate(rows){ document.getElementById('pvBody').innerHTML=''; rid=0; rows.forEach(r=>addRow(r.num,r.qt,r.diff,r.tname,r.score,r.chapter||'')); refreshUI(); document.getElementById('azResult').innerHTML=''; }
+function addRow(num,qt,diff,tname,score,chapter){
+  rid++;
+  const id='r'+rid;
+  const n=num||document.querySelectorAll('#pvBody tr').length+1;
+  const tr=document.createElement('tr');
+  tr.id=id;
+  tr.innerHTML=`<td class="rnum">${n}</td><td><select style="width:100%;text-align:center"><option ${qt==='객관식'?'selected':''}>객관식</option><option ${qt==='주관식'?'selected':''}>주관식</option></select></td><td><select onchange="stylD(this)" style="width:100%;text-align:center">${DIFFS.map(d=>`<option ${d===(diff||'중')?'selected':''}>${d}</option>`).join('')}</select></td><td><input class="chapter-inp" value="${(chapter||'').replace(/"/g,'&quot;')}" placeholder="대단원" style="width:100%"></td><td><input class="tname-inp" value="${(tname||'').replace(/"/g,'&quot;')}" placeholder="유형명" style="min-width:100px"></td><td><input class="sc-inp" type="number" min="1" max="20" value="${score||4}" style="width:44px"></td><td style="text-align:center"><button class="del-btn" onclick="delRow('${id}')">✕</button></td>`;
+  document.getElementById('pvBody').appendChild(tr);
+  stylD(tr.querySelectorAll('select')[1]);
+}
+function addManRow(){ const n=document.querySelectorAll('#pvBody tr').length+1; addRow(n,'객관식','중','','',4); refreshUI(); }
+function delRow(id){ document.getElementById(id)?.remove(); renum(); refreshUI(); }
+function renum(){ document.querySelectorAll('#pvBody tr').forEach((tr,i)=>{ tr.cells[0].textContent=i+1; }); }
+function clearAll(){ if(confirm('전체 삭제할까요?')){ document.getElementById('pvBody').innerHTML=''; refreshUI(); document.getElementById('azResult').innerHTML=''; } }
+function stylD(sel){ DIFFS.forEach(d=>sel.classList.remove('d-sel-'+d)); sel.classList.add('d-sel-'+sel.value); }
+function setAllScore(s){ if(!s||isNaN(s))return; document.querySelectorAll('#pvBody tr').forEach(tr=>{ const inp=tr.querySelector('.sc-inp');if(inp)inp.value=s; }); showToast(`✅ 전체 배점 ${s}점 적용`); }
+
+function autoFillChapters(){
+  const grade=document.getElementById('iGr').value;
+  const rows=document.querySelectorAll('#pvBody tr');
+  if(!rows.length){ showToast('⚠️ 문항 데이터를 먼저 입력해주세요'); return; }
+  const curriculum=CURRICULUM_22[grade]||CURRICULUM_22['고1'];
+  let filled=0,notFound=0;
+  const foundChapters=new Set();
+  rows.forEach(tr=>{
+    const tnameInp=tr.querySelector('.tname-inp');
+    const chapterInp=tr.querySelector('.chapter-inp');
+    if(!tnameInp||!chapterInp) return;
+    const tname=tnameInp.value.toLowerCase();
+    let matched=null;
+    for(const [chapter,keywords] of Object.entries(curriculum)){ for(const kw of keywords){ if(tname.includes(kw.toLowerCase())){ matched=chapter; foundChapters.add(chapter); break; } } if(matched) break; }
+    if(matched){ chapterInp.value=matched; filled++; } else { chapterInp.value='기타'; notFound++; }
+  });
+  const resultDiv=document.getElementById('azResult');
+  const chaptersArr=[...foundChapters];
+  if(chaptersArr.length>0){
+    resultDiv.innerHTML=`<div style="margin-top:12px;padding:12px 16px;background:white;border-radius:8px;border:1px solid #C4B5FD;"><div style="font-size:0.82rem;color:var(--purple);font-weight:700;margin-bottom:6px;">✅ ${filled}개 문항 자동 입력 완료 ${notFound>0?`(${notFound}개는 '기타')`:''}</div><div style="font-size:0.78rem;color:var(--text-secondary);">발견된 대단원: <strong>${chaptersArr.join(', ')}</strong></div><div style="font-size:0.72rem;color:var(--text-muted);margin-top:6px;">* 잘못 입력된 경우 직접 수정할 수 있어요</div></div>`;
+  } else {
+    resultDiv.innerHTML=`<div style="margin-top:12px;padding:12px 16px;background:#FEF2F2;border-radius:8px;border:1px solid #FECACA;"><div style="font-size:0.82rem;color:var(--danger);font-weight:700;">⚠️ 유형명에서 대단원을 찾지 못했습니다</div><div style="font-size:0.78rem;color:var(--text-secondary);margin-top:4px;">모든 문항이 '기타'로 입력되었어요. 직접 수정해주세요.</div></div>`;
+  }
+  showToast(`✅ ${rows.length}개 문항에 대단원이 입력되었습니다`);
+}
+
+function refreshUI(){
+  const n=document.querySelectorAll('#pvBody tr').length;
+  document.getElementById('pvArea').style.display=n?'block':'none';
+  document.getElementById('scoreZone').style.display=n?'flex':'none';
+  document.getElementById('aiChapterZone').style.display=n?'flex':'none';
+  document.getElementById('pvCnt').textContent=n+'문항';
+  const hero=document.getElementById('pasteHero');
+  if(n){ hero.classList.add('has-data'); document.getElementById('pasteIcon').textContent='✅'; document.getElementById('pasteTitle').textContent=`${n}개 문항 입력 완료`; document.getElementById('pasteSub').textContent='다시 붙여넣으면 기존 데이터가 교체됩니다'; }
+  else { hero.classList.remove('has-data'); document.getElementById('pasteIcon').textContent='📋'; document.getElementById('pasteTitle').textContent='여기를 클릭 후 Ctrl+V 로 붙여넣기'; document.getElementById('pasteSub').textContent='매쓰플랫 학습지 정보 탭 표를 복사해서 붙여넣으세요\n번호, 문제 타입, 난이도, 유형명이 자동으로 인식됩니다'; }
+}
+
+const SAMPLE=[[1,'객관식','중하','','복소수가 서로 같을 조건; 상등',3],[2,'객관식','중하','','곱셈 공식의 변형(1) 문자가 2개인 경우',3],[3,'주관식','중하','','이차방정식의 근의 조건이 주어진 경우',4],[4,'객관식','하','','나머지정리(2) 일차식으로 나눌 때 미정계수 구하기',3],[5,'주관식','상','','이차함수 최대·최소의 활용',5],[6,'객관식','중','','켤레복소수의 성질',3],[7,'객관식','하','','항등식에서 미정계수 구하기(1) 계수 비교법',3],[8,'주관식','최상','','조건이 주어진 다항식의 인수분해',5],[9,'객관식','중','','삼각형의 무게중심',3],[10,'객관식','상','','이차함수의 그래프와 직선의 위치 관계',4],[11,'주관식','상','','최댓값 또는 최솟값이 주어졌을 때 미정계수 구하기',5],[12,'객관식','최상','','주어진 복소수를 변형하여 고차식의 값 구하기',4]];
+function loadSample(){ document.getElementById('pvBody').innerHTML=''; rid=0; SAMPLE.forEach(r=>addRow(r[0],r[1],r[2],r[3],r[4],r[5])); refreshUI(); document.getElementById('azResult').innerHTML=''; showToast('📋 샘플 데이터 불러옴 - 대단원 자동입력을 실행해보세요!'); }
+
+function collect(){
+  return [...document.querySelectorAll('#pvBody tr')].map((tr,i)=>{
+    const s=tr.querySelectorAll('select');
+    const inp=tr.querySelectorAll('input');
+    return{ num:i+1, qt:s[0].value, diff:s[1].value, chapter:inp[0].value||'기타', tname:inp[1].value||'-', score:parseInt(inp[2].value)||4 };
+  });
+}
+
+async function generate(){
+  const data=collect();
+  if(!data.length){ showToast('⚠️ 문항 데이터를 먼저 입력해주세요'); return; }
+  const info={ school:document.getElementById('iSch').value||'○○학교', grade:document.getElementById('iGr').value, examType:document.getElementById('iEx').value, pub:document.getElementById('iPub').value||'-', range:document.getElementById('iRng').value||'-' };
+  document.getElementById('loader').classList.add('on');
+  document.getElementById('loadT').textContent='결과지를 생성하고 있습니다...';
+  document.getElementById('loadS').textContent='AI가 출제 경향을 분석하는 중';
+  const st=calcSt(data);
+  let cmt='';
+  try{ cmt=await getAI(info,data,st); } catch(e){ cmt=fallback(info,data,st); }
+  renderRpt(info,data,st,cmt);
+  document.getElementById('loader').classList.remove('on');
+  document.getElementById('tbadge').style.display='';
+  goTab('Res');
+}
+
+function calcSt(data){
+  const total=data.length,totalScore=data.reduce((s,r)=>s+r.score,0);
+  const dc={};DIFFS.forEach(d=>dc[d]=0);data.forEach(r=>dc[r.diff]++);
+  const objN=data.filter(r=>r.qt==='객관식').length,subN=data.filter(r=>r.qt==='주관식').length;
+  const objS=data.filter(r=>r.qt==='객관식').reduce((s,r)=>s+r.score,0);
+  const subS=data.filter(r=>r.qt==='주관식').reduce((s,r)=>s+r.score,0);
+  const chapterMap={};
+  data.forEach(r=>{ const ch=r.chapter||'기타'; if(!chapterMap[ch]) chapterMap[ch]={cnt:0,score:0,items:[]}; chapterMap[ch].cnt++; chapterMap[ch].score+=r.score; chapterMap[ch].items.push(r); });
+  return{total,totalScore,dc,objN,subN,objS,subS,chapterMap};
+}
+
+async function getAI(info,data,st){
+  const ds=DIFFS.filter(d=>st.dc[d]>0).map(d=>`${d} ${st.dc[d]}문항(${Math.round(st.dc[d]/st.total*100)}%)`).join(', ');
+  const types=[...new Set(data.map(r=>r.tname))].slice(0,6).join(', ');
+  const chapters=Object.keys(st.chapterMap).join(', ');
+  const prompt=`수학 교육 전문가로서, 아래 시험 분석 데이터를 기반으로 학부모 상담 및 학원 블로그에 바로 활용할 수 있는 시험 총평과 기말대비 학습 방향을 작성해주세요.\n\n시험: ${info.school} ${info.grade} ${info.examType} / 범위: ${info.range} / 교과서: ${info.pub}\n총 ${st.total}문항 ${st.totalScore}점 / 객관식 ${st.objN}문항(${st.objS}점) / 주관식 ${st.subN}문항(${st.subS}점)\n난이도: ${ds}\n출제 단원: ${chapters}\n출제 유형 예시: ${types}\n\n요건: ①전체 난이도와 출제 특징 분석(수치 포함, 3~4문장) ②객관식/주관식 구성의 학습적 의미 ③기말 대비 핵심 전략 3가지(번호 없이 자연스럽게) ④총 300~380자 ⑤제목 없이 본문만 ⑥맞춤법과 띄어쓰기를 정확하게 지켜서 작성`;
+  const res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:800,messages:[{role:"user",content:prompt}]})});
+  const d=await res.json();return d.content[0].text;
+}
+
+function fallback(info,data,st){
+  const hp=Math.round(((st.dc['최상']||0)+(st.dc['상']||0))/st.total*100);
+  return`이번 ${info.school} ${info.grade} ${info.examType}는 총 ${st.total}문항 ${st.totalScore}점 만점으로 출제되었습니다. 상위 난이도(상·최상) 문항이 ${hp}%를 차지해 ${hp>35?'다소 어렵게':'적정 수준으로'} 구성되었으며, 기본 개념 확인부터 심화 응용까지 균형 있게 포함된 것이 특징입니다.\n\n객관식 ${st.objN}문항과 주관식 ${st.subN}문항의 구성으로, 개념 이해와 서술형 풀이 능력을 함께 평가하는 구조입니다.\n\n기말고사 대비를 위해서는 이번 시험의 오답 원인을 분석하고 취약 유형을 집중 보완하는 것이 우선입니다. 고난도 문항에 자주 등장하는 심화 유형에 대한 반복 학습과 주관식 풀이 과정을 단계별로 서술하는 연습을 병행하시길 권장드립니다.`;
+}
+
+/* ────────────────────────────────────────────
+   난이도 차트: 순수 SVG로 막대 + 꺾은선 생성
+   DOM 좌표 의존 없음 → PDF/인쇄에서 정확히 렌더
+──────────────────────────────────────────── */
+function buildDiffChartSVG(dc, total) {
+  const diffData = DIFFS.map(d => ({
+    label: d,
+    cnt: dc[d] || 0,
+    pct: total > 0 ? Math.round((dc[d] || 0) / total * 100) : 0
+  })).filter(d => d.cnt > 0);
+
+  if (!diffData.length) return '<svg viewBox="0 0 500 200"></svg>';
+
+  const W = 500, H = 220;
+  const PAD_L = 10, PAD_R = 10, PAD_TOP = 40, PAD_BOT = 36;
+  const chartW = W - PAD_L - PAD_R;
+  const chartH = H - PAD_TOP - PAD_BOT;
+  const n = diffData.length;
+  const colW = chartW / n;
+  const BAR_W = Math.min(52, colW * 0.55);
+  const maxCnt = Math.max(...diffData.map(d => d.cnt), 1);
+
+  // 막대 색상
+  const barColors = { '최상':'url(#g최상)', '상':'url(#g상)', '중':'url(#g중)', '중하':'url(#g중하)', '하':'url(#g하)' };
+  const gradDefs = `
+    <defs>
+      <linearGradient id="g최상" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#EF4444"/><stop offset="100%" stop-color="#DC2626"/></linearGradient>
+      <linearGradient id="g상" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#F97316"/><stop offset="100%" stop-color="#EA580C"/></linearGradient>
+      <linearGradient id="g중" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#3B82F6"/><stop offset="100%" stop-color="#2563EB"/></linearGradient>
+      <linearGradient id="g중하" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#14B8A6"/><stop offset="100%" stop-color="#0D9488"/></linearGradient>
+      <linearGradient id="g하" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#9CA3AF"/><stop offset="100%" stop-color="#6B7280"/></linearGradient>
+    </defs>`;
+
+  // 각 막대의 중심 x, 꺾은선 점 y 계산
+  const cols = diffData.map((d, i) => {
+    const cx = PAD_L + colW * i + colW / 2;
+    const barH = Math.max(Math.round(d.cnt / maxCnt * chartH), 24);
+    const barX = cx - BAR_W / 2;
+    const barY = PAD_TOP + chartH - barH;
+    // 꺾은선 점: 막대 상단 중앙
+    const dotX = cx;
+    const dotY = barY - 14; // 막대 위 14px (dot 위치, 비율 텍스트와 독립)
+    return { d, cx, barH, barX, barY, dotX, dotY };
+  });
+
+  // 막대 + 레이블
+  let bars = '';
+  cols.forEach(({ d, cx, barH, barX, barY }) => {
+    const color = barColors[d.label] || barColors['중'];
+    bars += `<rect x="${barX}" y="${barY}" width="${BAR_W}" height="${barH}" rx="4" fill="${color}"/>`;
+    // 막대 안 숫자
+    if (barH >= 24) {
+      bars += `<text x="${cx}" y="${barY + 18}" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="14" font-weight="700" fill="white">${d.cnt}</text>`;
+    }
+    // 하단 레이블
+    bars += `<text x="${cx}" y="${PAD_TOP + chartH + 20}" text-anchor="middle" font-family="'Noto Sans KR',sans-serif" font-size="13" font-weight="700" fill="#1B2838">${d.label}</text>`;
+    // 비율 (막대 위)
+    bars += `<text x="${cx}" y="${barY - 32}" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" font-weight="600" fill="#9CA3AF">${d.pct}%</text>`;
+  });
+
+  // 꺾은선
+  let lineEl = '';
+  if (cols.length >= 2) {
+    const pts = cols.map(c => `${c.dotX},${c.dotY}`).join(' ');
+    lineEl += `<polyline points="${pts}" fill="none" stroke="#F97316" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`;
+  }
+  // 꺾은선 점
+  cols.forEach(({ dotX, dotY }) => {
+    lineEl += `<circle cx="${dotX}" cy="${dotY}" r="6" fill="#F97316" stroke="white" stroke-width="3"/>`;
+  });
+
+  // 축선
+  const axes = `<line x1="${PAD_L}" y1="${PAD_TOP}" x2="${PAD_L}" y2="${PAD_TOP+chartH}" stroke="#E5E7EB" stroke-width="2"/>
+    <line x1="${PAD_L}" y1="${PAD_TOP+chartH}" x2="${W-PAD_R}" y2="${PAD_TOP+chartH}" stroke="#E5E7EB" stroke-width="2"/>`;
+
+  return `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">${gradDefs}${axes}${bars}${lineEl}</svg>`;
+}
+
+function renderRpt(info,data,st,cmt){
+  const today=new Date().toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric'});
+
+  /* 난이도 차트 SVG */
+  const diffSvg = buildDiffChartSVG(st.dc, st.total);
+  const diffChart = `
+    <div class="diff-chart-wrap">
+      <div class="diff-chart-title">난이도 별 문항수, 비율</div>
+      <div class="diff-chart-svg-wrap">${diffSvg}</div>
+      <div class="diff-chart-legend">
+        <div class="diff-legend-item"><div class="diff-legend-bar"></div>문항 수</div>
+        <div class="diff-legend-item"><div class="diff-legend-line"></div>비율</div>
+      </div>
+    </div>`;
+
+  /* 파이 차트 */
+  const totalScore=st.objS+st.subS;
+  const oP=totalScore>0?Math.round(st.objS/totalScore*100):50;
+  const objAngle=oP*3.6;
+  function pieSlice(cx,cy,r,startAngle,endAngle,color){
+    const s=(startAngle-90)*Math.PI/180,e=(endAngle-90)*Math.PI/180;
+    const x1=cx+r*Math.cos(s),y1=cy+r*Math.sin(s),x2=cx+r*Math.cos(e),y2=cy+r*Math.sin(e);
+    const la=endAngle-startAngle>180?1:0;
+    return `<path d="M${cx},${cy} L${x1},${y1} A${r},${r} 0 ${la} 1 ${x2},${y2} Z" fill="${color}"/>`;
+  }
+  const pieR=85;
+  const objSlice=pieSlice(100,100,pieR,0,objAngle,'#3B82F6');
+  const subSlice=pieSlice(100,100,pieR,objAngle,360,'#F97316');
+  const oLA=(objAngle/2-90)*Math.PI/180,sLA=((objAngle+360)/2-90)*Math.PI/180,lR=50;
+  const oLX=100+lR*Math.cos(oLA),oLY=100+lR*Math.sin(oLA);
+  const sLX=100+lR*Math.cos(sLA),sLY=100+lR*Math.sin(sLA);
+  const typePieChart=`<div class="type-pie-wrap"><div class="type-pie-title">객관식, 주관식 배점</div><div class="type-pie-container"><div class="type-pie-chart"><svg viewBox="0 0 200 200" class="pie-svg-filled">${objSlice}${subSlice}<text x="${oLX}" y="${oLY}" text-anchor="middle" dominant-baseline="middle" class="pie-label-num">${st.objS}</text><text x="${sLX}" y="${sLY}" text-anchor="middle" dominant-baseline="middle" class="pie-label-num">${st.subS}</text></svg></div><div class="type-pie-legend"><div class="pie-legend-item"><div class="pie-legend-dot" style="background:#3B82F6"></div>객관식</div><div class="pie-legend-item"><div class="pie-legend-dot" style="background:#F97316"></div>주관식</div></div></div></div>`;
+
+  /* 대단원 차트 */
+  const chapters=Object.entries(st.chapterMap).sort((a,b)=>b[1].score-a[1].score);
+  const maxChScore=Math.max(...chapters.map(([,v])=>v.score),1);
+  const chapterChartRows=chapters.map(([name,v])=>{
+    const wS=Math.round(v.score/maxChScore*100);
+    const wC=Math.round(v.cnt/maxChScore*100);
+    return`<div class="chapter-row"><div class="chapter-row-name">${name}</div><div class="chapter-row-bars"><div class="chapter-bar-line"><div class="chapter-bar-track"><div class="chapter-bar-fill count" style="width:${Math.max(wC,8)}%">${v.cnt}</div></div></div><div class="chapter-bar-line"><div class="chapter-bar-track"><div class="chapter-bar-fill score" style="width:${wS}%">${v.score}</div></div></div></div></div>`;
+  }).join('');
+
+  /* 문항 테이블 */
+  let qrows='';
+  chapters.forEach(([chName,chData])=>{
+    qrows+=`<tr class="chapter-group-header"><td colspan="5"><div class="chapter-group-title"><span class="ch-badge">${chName}</span><div class="chapter-group-stats"><span>${chData.cnt}문항</span><span>${chData.score}점</span></div></div></td></tr>`;
+    chData.items.forEach(r=>{ qrows+=`<tr><td class="q-num-cell">${r.num}</td><td><span class="badge ${r.qt==='객관식'?'b-obj':'b-sub'}">${r.qt}</span></td><td><span class="badge b-${r.diff}">${r.diff}</span></td><td class="left q-name-cell">${r.tname}</td><td class="q-score-cell">${r.score}점</td></tr>`; });
+  });
+
+  document.getElementById('rptOut').innerHTML=`
+  <div class="rpt-header">
+    <div class="rpt-header-top"><div><div class="rpt-eyebrow">${info.school} · ${info.grade}</div><div class="rpt-title">${info.examType} <span class="rpt-title-accent">시험지 분석 결과</span></div></div><div class="rpt-score-block"><div class="rpt-score-num">${st.totalScore}<span class="rpt-score-unit">점</span></div><div class="rpt-score-sub">총 ${st.total}문항 만점</div></div></div>
+    <div class="rpt-meta-row">
+      <div class="rpt-meta-item"><div class="rpt-meta-key">출제 범위</div><div class="rpt-meta-val">${info.range||'—'}</div></div>
+      <div class="rpt-meta-item"><div class="rpt-meta-key">교과서</div><div class="rpt-meta-val">${info.pub}</div></div>
+      <div class="rpt-meta-item"><div class="rpt-meta-key">객관식</div><div class="rpt-meta-val">${st.objN}문항</div></div>
+      <div class="rpt-meta-item"><div class="rpt-meta-key">주관식</div><div class="rpt-meta-val">${st.subN}문항</div></div>
+      <div class="rpt-meta-item"><div class="rpt-meta-key">분석일</div><div class="rpt-meta-val">${today}</div></div>
+    </div>
+  </div>
+  <div class="kpi-strip">
+    <div class="kpi-cell"><div class="kpi-n">${st.total}<span class="unit">문항</span></div><div class="kpi-l">총 문항 수</div></div>
+    <div class="kpi-cell"><div class="kpi-n">${st.totalScore}<span class="unit">점</span></div><div class="kpi-l">총 배점</div></div>
+    <div class="kpi-cell"><div class="kpi-n">${Math.round(((st.dc['최상']||0)+(st.dc['상']||0))/st.total*100)}<span class="unit">%</span></div><div class="kpi-l">고난도 비율 (상·최상)</div></div>
+    <div class="kpi-cell"><div class="kpi-n">${(st.totalScore/st.total).toFixed(1)}<span class="unit">점</span></div><div class="kpi-l">문항당 평균 배점</div></div>
+  </div>
+  <div class="rpt-sec">${diffChart}</div>
+  <div class="rpt-sec">${typePieChart}</div>
+  <div class="rpt-sec"><div class="chapter-chart"><div class="chapter-chart-title">단원별 배점 및 문항 수</div>${chapterChartRows}<div class="chapter-chart-legend"><div class="chapter-legend-item"><div class="chapter-legend-dot count"></div>문항 수</div><div class="chapter-legend-item"><div class="chapter-legend-dot score"></div>배점</div></div></div></div>
+  <div class="rpt-sec"><div class="rpt-sec-title">문항별 분석 (대단원별)</div><table class="qtbl"><thead><tr><th style="width:48px">번호</th><th style="width:76px">유형</th><th style="width:60px">난이도</th><th class="left">유형명</th><th style="width:56px">배점</th></tr></thead><tbody>${qrows}</tbody></table></div>
+  <div class="rpt-sec"><div class="rpt-sec-title">AI 총평 및 기말고사 대비 학습 방향</div><div class="ai-box"><div class="ai-box-head"><span class="ai-box-tag">AI 분석</span><span class="ai-box-sub">Claude AI · 매쓰플랫 기출업로드 데이터 기반</span><button class="ai-edit-btn" onclick="toggleAiEdit()">✏️ 수정</button></div><div class="ai-box-text" id="aiTextView">${cmt}</div><textarea class="ai-box-edit" id="aiTextEdit" style="display:none">${cmt}</textarea><div class="ai-edit-actions" id="aiEditActions" style="display:none"><button class="ai-save-btn" onclick="saveAiEdit()">✓ 저장</button><button class="ai-cancel-btn" onclick="cancelAiEdit()">취소</button></div></div></div>
+  <div class="rpt-footer"><div class="rpt-footer-l">매쓰플랫 <span class="rpt-footer-accent">시험분석 결과지</span></div><div class="rpt-footer-r">${today}</div></div>`;
+}
+
+function showToast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2800); }
+function toggleAiEdit(){ document.getElementById('aiTextView').style.display='none'; document.getElementById('aiTextEdit').style.display='block'; document.getElementById('aiEditActions').style.display='flex'; document.getElementById('aiTextEdit').focus(); }
+function saveAiEdit(){ const v=document.getElementById('aiTextView'),e=document.getElementById('aiTextEdit'),a=document.getElementById('aiEditActions'); v.textContent=e.value; v.style.display='block'; e.style.display='none'; a.style.display='none'; showToast('✅ AI 코멘트가 수정되었습니다'); }
+function cancelAiEdit(){ const v=document.getElementById('aiTextView'),e=document.getElementById('aiTextEdit'),a=document.getElementById('aiEditActions'); e.value=v.textContent; v.style.display='block'; e.style.display='none'; a.style.display='none'; }
+
+async function saveAsImage(){
+  const rptOut=document.getElementById('rptOut');
+  if(!rptOut||rptOut.querySelector('.empty')){ showToast('⚠️ 먼저 결과지를 생성해주세요'); return; }
+  showToast('🖼️ 이미지 생성 중...');
+  if(typeof html2canvas==='undefined'){
+    const script=document.createElement('script');
+    script.src='https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+    document.head.appendChild(script);
+    await new Promise(resolve=>script.onload=resolve);
+  }
+  try {
+    const editBtn=document.querySelector('.ai-edit-btn');
+    if(editBtn) editBtn.style.display='none';
+    const canvas=await html2canvas(rptOut,{scale:2,useCORS:true,backgroundColor:'#ffffff',logging:false});
+    if(editBtn) editBtn.style.display='';
+    const link=document.createElement('a');
+    const school=document.getElementById('iSch').value||'시험분석';
+    const grade=document.getElementById('iGr').value||'';
+    const examType=document.getElementById('iEx').value||'';
+    link.download=`${school}_${grade}_${examType}_분석결과지.png`;
+    link.href=canvas.toDataURL('image/png');
+    link.click();
+    showToast('✅ 이미지가 저장되었습니다!');
+  } catch(e){ console.error(e); showToast('⚠️ 이미지 저장 중 오류가 발생했습니다'); }
+}
+</script>
+</body>
+</html>
