@@ -566,13 +566,15 @@ async function generate(){
 }
 
 function calcSt(data){
-  const total=data.length,totalScore=Math.round(data.reduce((s,r)=>s+r.score,0)*10)/10;
+  const rnd=x=>Math.round(x*100)/100; /* 부동소수점 오차 제거 */
+  const total=data.length,totalScore=rnd(data.reduce((s,r)=>s+r.score,0));
   const dc={};DIFFS.forEach(d=>dc[d]=0);data.forEach(r=>dc[r.diff]++);
   const objN=data.filter(r=>r.qt==='객관식').length,subN=data.filter(r=>r.qt==='주관식').length;
-  const objS=data.filter(r=>r.qt==='객관식').reduce((s,r)=>s+r.score,0);
-  const subS=data.filter(r=>r.qt==='주관식').reduce((s,r)=>s+r.score,0);
+  const objS=rnd(data.filter(r=>r.qt==='객관식').reduce((s,r)=>s+r.score,0));
+  const subS=rnd(data.filter(r=>r.qt==='주관식').reduce((s,r)=>s+r.score,0));
   const chapterMap={};
   data.forEach(r=>{ const ch=r.chapter||'기타'; if(!chapterMap[ch]) chapterMap[ch]={cnt:0,score:0,items:[]}; chapterMap[ch].cnt++; chapterMap[ch].score+=r.score; chapterMap[ch].items.push(r); });
+  Object.values(chapterMap).forEach(v=>{ v.score=rnd(v.score); });
   return{total,totalScore,dc,objN,subN,objS,subS,chapterMap};
 }
 
@@ -694,12 +696,18 @@ function renderRpt(info,data,st,cmt){
     return `<path d="M${cx},${cy} L${x1},${y1} A${r},${r} 0 ${la} 1 ${x2},${y2} Z" fill="${color}"/>`;
   }
   const pieR=85;
-  const objSlice=pieSlice(100,100,pieR,0,objAngle,'#3B82F6');
-  const subSlice=pieSlice(100,100,pieR,objAngle,360,'#F97316');
+  const onlyObj=st.objS>0&&st.subS<=0, onlySub=st.subS>0&&st.objS<=0;
+  let objSlice,subSlice;
+  if(onlyObj){ objSlice=`<circle cx="100" cy="100" r="${pieR}" fill="#3B82F6"/>`; subSlice=''; }
+  else if(onlySub){ objSlice=''; subSlice=`<circle cx="100" cy="100" r="${pieR}" fill="#F97316"/>`; }
+  else { objSlice=pieSlice(100,100,pieR,0,objAngle,'#3B82F6'); subSlice=pieSlice(100,100,pieR,objAngle,360,'#F97316'); }
   const oLA=(objAngle/2-90)*Math.PI/180,sLA=((objAngle+360)/2-90)*Math.PI/180,lR=50;
   const oLX=100+lR*Math.cos(oLA),oLY=100+lR*Math.sin(oLA);
   const sLX=100+lR*Math.cos(sLA),sLY=100+lR*Math.sin(sLA);
-  const typePieChart=`<div class="type-pie-wrap"><div class="type-pie-title">객관식, 주관식 배점</div><div class="type-pie-container"><div class="type-pie-chart"><svg viewBox="0 0 200 200" class="pie-svg-filled">${objSlice}${subSlice}<text x="${oLX}" y="${oLY}" text-anchor="middle" dominant-baseline="middle" class="pie-label-num">${st.objS}</text><text x="${sLX}" y="${sLY}" text-anchor="middle" dominant-baseline="middle" class="pie-label-num">${st.subS}</text></svg></div><div class="type-pie-legend"><div class="pie-legend-item"><div class="pie-legend-dot" style="background:#3B82F6"></div>객관식</div><div class="pie-legend-item"><div class="pie-legend-dot" style="background:#F97316"></div>주관식</div></div></div></div>`;
+  const pieLabels = onlyObj ? `<text x="100" y="100" text-anchor="middle" dominant-baseline="middle" class="pie-label-num">${st.objS}</text>`
+    : onlySub ? `<text x="100" y="100" text-anchor="middle" dominant-baseline="middle" class="pie-label-num">${st.subS}</text>`
+    : `<text x="${oLX}" y="${oLY}" text-anchor="middle" dominant-baseline="middle" class="pie-label-num">${st.objS}</text><text x="${sLX}" y="${sLY}" text-anchor="middle" dominant-baseline="middle" class="pie-label-num">${st.subS}</text>`;
+  const typePieChart=`<div class="type-pie-wrap"><div class="type-pie-title">객관식, 주관식 배점</div><div class="type-pie-container"><div class="type-pie-chart"><svg viewBox="0 0 200 200" class="pie-svg-filled">${objSlice}${subSlice}${pieLabels}</svg></div><div class="type-pie-legend"><div class="pie-legend-item"><div class="pie-legend-dot" style="background:#3B82F6"></div>객관식</div><div class="pie-legend-item"><div class="pie-legend-dot" style="background:#F97316"></div>주관식</div></div></div></div>`;
 
   /* 대단원 차트 */
   const chapters=Object.entries(st.chapterMap).sort((a,b)=>b[1].score-a[1].score);
